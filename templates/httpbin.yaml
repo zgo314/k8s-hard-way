@@ -57,7 +57,7 @@ spec:
         imagePullPolicy: IfNotPresent
         name: httpbin
         env:
-          name: USE_REAL_HOSTNAME
+        - name: USE_REAL_HOSTNAME
           value: "true"
         ports:
         - containerPort: 8080
