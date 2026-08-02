@@ -53,11 +53,11 @@ spec:
     spec:
       serviceAccountName: httpbin
       containers:
-      - image: docker.io/mccutchen/go-httpbin:latest
-        imagePullPolicy: IfNotPresent
-        name: httpbin
-        env:
-        - name: USE_REAL_HOSTNAME
-          value: "true"
-        ports:
-        - containerPort: 8080
+        - image: docker.io/mccutchen/go-httpbin:latest
+          imagePullPolicy: IfNotPresent
+          name: httpbin
+          env:
+            - name: USE_REAL_HOSTNAME
+              value: "true"
+          ports:
+            - containerPort: 8080
