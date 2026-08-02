@@ -41,7 +41,7 @@ kind: Deployment
 metadata:
   name: httpbin
 spec:
-  replicas: 1
+  replicas: 4
   selector:
     matchLabels:
       app: httpbin
