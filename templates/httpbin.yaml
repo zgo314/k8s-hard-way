@@ -15,6 +15,7 @@
 ##################################################################################################
 # httpbin service
 ##################################################################################################
+---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
@@ -23,10 +24,10 @@ metadata:
 apiVersion: v1
 kind: Service
 metadata:
-  name: httpbin
   labels:
     app: httpbin
     service: httpbin
+  name: httpbin
 spec:
   ports:
   - name: http
@@ -51,13 +52,13 @@ spec:
         app: httpbin
         version: v1
     spec:
-      serviceAccountName: httpbin
       containers:
-        - image: docker.io/mccutchen/go-httpbin:latest
-          imagePullPolicy: IfNotPresent
-          name: httpbin
-          env:
-            - name: USE_REAL_HOSTNAME
-              value: "true"
-          ports:
-            - containerPort: 8080
+      - env:
+        - name: USE_REAL_HOSTNAME
+          value: "true"
+        image: docker.io/mccutchen/go-httpbin:latest
+        imagePullPolicy: IfNotPresent
+        name: httpbin
+        ports:
+        - containerPort: 8080
+      serviceAccountName: httpbin
