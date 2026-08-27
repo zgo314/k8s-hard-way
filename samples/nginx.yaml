@@ -54,7 +54,7 @@ data:
         }
 
         upstream backend_pool {
-            server backend:8000;
+            server backend:9000;
             keepalive 32;
             keepalive_requests 1000;
             keepalive_timeout 60s;
@@ -159,7 +159,7 @@ metadata:
 spec:
   ports:
   - name: http
-    port: 8000
+    port: 9000
     targetPort: 8080
   selector:
     app: backend
