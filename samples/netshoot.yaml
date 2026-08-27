@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    run: z-temp-pod
+  name: z-temp-pod
+spec:
+  containers:
+  - image: nicolaka/netshoot
+    name: z-temp-pod
+    resources: {}
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}
