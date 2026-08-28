@@ -1,0 +1,129 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: test
+  labels:
+    app: test
+    service: webapp
+spec:
+  ports:
+  - port: 80
+    name: http
+  selector:
+    app: test
+    service: webapp
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: test
+  name: test
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: test
+      service: webapp
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: test
+        service: webapp
+    spec:
+#      nodeName: lima-vm1
+
+#      nodeSelector:
+#        kubernetes.io/hostname: lima-vm2
+#        node-role.kubernetes.io/control-plane: "true"
+
+      ## k8s scheduler going to tolerate/ignore the taint
+      ## on the nodes if present and matches the below key/value/effect
+      ## k taint node <node> key=value:effect
+#      tolerations:
+#        - key: nodeType
+#          operator: Equal
+#          value: lima
+#          effect: NoSchedule
+
+##     nodeAffinity
+##     Add a label to nodes
+##     k label node/lima-vm2 topology=vm2
+      # affinity:
+      #   nodeAffinity:
+      #     requiredDuringSchedulingIgnoredDuringExecution:  # it is a must
+      #       nodeSelectorTerms:
+      #         - matchExpressions:
+      #             - key: topology
+      #               operator: In
+      #               values:
+      #                 - vm2
+      #     preferredDuringSchedulingIgnoredDuringExecution:
+      #       - preference:
+      #           matchExpressions:
+      #             - key: topology
+      #               operator: In
+      #               values:
+      #                 - vm3
+      #         weight: 100
+
+##
+##    Pod Affinity / AntiAffinity
+      # affinity:
+      #   podAffinity:
+      #     preferredDuringSchedulingIgnoredDuringExecution:
+      #       - podAffinityTerm:
+      #           topologyKey: beta.kubernetes.io/os
+      #           labelSelector:
+      #             matchLabels:
+      #               kubernetes.io/hostname: lima-vm3
+      #         weight: 100
+        # podAntiAffinity:
+        #   requiredDuringSchedulingIgnoredDuringExecution:  # it is a must
+        #     - topologyKey: kubernetes.io/hostname # this value is unique for each node
+        #       ## topologyKey: beta.kubernetes.io/os # this is usually same for all nodes, hence only 1 pod will be created
+        #       labelSelector:
+        #         matchLabels:
+        #           app: test
+      containers:
+      - image: datagenx/hello-kubernetes:1.10
+        name: webapp
+        ports:
+          - name: http
+            containerPort: 8080
+            protocol: TCP
+        env:
+        - name: KUBERNETES_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: KUBERNETES_POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: KUBERNETES_NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        - name: PORT
+          value: "8080"
+        - name: MESSAGE
+          value: "This is $(KUBERNETES_POD_NAME) on $(KUBERNETES_NODE_NAME)"
+## Liveness / Readiness will generate logs
+#        livenessProbe:
+#          httpGet:
+#            path: /
+#            port: http
+#        readinessProbe:
+#          httpGet:
+#            path: /
+#            port: http
+        resources:
+          requests:
+            cpu: "50m"
+            memory: "50Mi"
+          limits:
+            cpu: "100m"
+            memory: "100Mi"
+status: {}
